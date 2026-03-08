@@ -2,49 +2,91 @@
 
 [中文说明](./README.zh-CN.md)
 
-A small prompt pack for turning Codex CLI into a more stable long-term personal assistant workflow.
+Prompt templates for turning Codex CLI into a more consistent long-term personal assistant workflow.
 
-This repository provides three prompt variants plus a comparison sheet, so you can choose between safer setup, balanced day-to-day use, and stronger automation.
+This repository is for people who want Codex CLI to do more than answer one-off questions. The prompts here help it:
 
-## Files
+- keep a stable collaboration style
+- initialize local project memory structure
+- avoid unnecessary rewrites
+- bootstrap user preferences in a lightweight way
 
-- [codex-cli-personal-assistant-prompt-lite.md](./codex-cli-personal-assistant-prompt-lite.md)  
-  Balanced version for most day-to-day use.
+The pack is intentionally split into three variants, so you can choose how cautious or proactive Codex should be in your environment.
 
-- [codex-cli-personal-assistant-prompt-strong.md](./codex-cli-personal-assistant-prompt-strong.md)  
-  More proactive version for full initialization and faster setup.
+## Why This Exists
+
+Raw prompts often overfit to an idealized agent model. In practice, Codex CLI behaves better when instructions are:
+
+- explicit about file operations
+- careful about existing content
+- realistic about what global config can and cannot control
+- lightweight enough to avoid blocking normal work
+
+These prompts are written around that reality.
+
+## What's Included
 
 - [codex-cli-personal-assistant-prompt-safe.md](./codex-cli-personal-assistant-prompt-safe.md)  
-  Safer version for first-time setup or existing environments you want to inspect before changing.
+  Inspect first, change later. Best for first-time setup and existing environments.
+
+- [codex-cli-personal-assistant-prompt-lite.md](./codex-cli-personal-assistant-prompt-lite.md)  
+  Balanced default for most day-to-day use.
+
+- [codex-cli-personal-assistant-prompt-strong.md](./codex-cli-personal-assistant-prompt-strong.md)  
+  More proactive setup for greenfield projects or when you want Codex to move faster.
 
 - [codex-cli-personal-assistant-prompt-comparison.md](./codex-cli-personal-assistant-prompt-comparison.md)  
-  Side-by-side comparison of the three prompt styles.
+  A side-by-side comparison table.
 
-## Which One To Use
+## Quick Start
+
+1. Open the prompt file you want to use.
+2. Copy the full `text` code block.
+3. Send it to Codex CLI in the target workspace.
+4. Let Codex inspect the workspace, update config, and start lightweight bootstrap if appropriate.
+
+## Which Version Should I Use?
 
 | Situation | Recommended |
 | --- | --- |
 | First time trying this workflow | `safe` |
 | Default long-term usage | `lite` |
-| New project and you want Codex to set up aggressively | `strong` |
+| New project and you want stronger setup automation | `strong` |
 | Existing workspace with a lot of hand-written config | `safe` |
 
-## Recommended Order
+## Recommended Adoption Path
 
-1. Start with `safe` to inspect your current environment.
-2. Move to `lite` once the structure feels right.
-3. Use `strong` only when you want Codex to push setup forward with fewer confirmations.
+1. Start with `safe` to observe how Codex behaves in your actual environment.
+2. Switch to `lite` once the structure and defaults feel right.
+3. Use `strong` when you explicitly want Codex to push setup forward with fewer confirmations.
 
-## Practical Notes
+## Design Principles
 
-- `~/.codex/AGENTS.md` should be treated as a default preference layer, not a permanent hard control layer.
+- Default preference layer, not hard control layer
+- Incremental edits over destructive rewrites
+- Project-local memory over fake global omniscience
+- Lightweight bootstrap over long onboarding forms
+- Realistic compatibility with Codex CLI behavior
+
+## Important Boundaries
+
+- `~/.codex/AGENTS.md` should be treated as a default preference layer, not a permanent hard control mechanism.
 - `.assistant/` is a local project convention for memory and collaboration context, not a built-in Codex CLI protocol.
-- Actual behavior still depends on runtime instructions, tool permissions, and session context.
+- Actual behavior still depends on runtime instructions, tool permissions, and higher-priority context.
 
-## Suggested Usage
+## Who This Is For
 
-Open the version you want, then send the full `text` code block to Codex CLI.
+This project is useful if you want Codex CLI to behave more like:
 
-If Codex behaves too aggressively, fall back to `safe`.
-If it is too conservative and does not make enough progress, switch to `strong`.
+- a repeatable project assistant
+- a workspace-aware collaborator
+- a tool that can preserve lightweight context across tasks
+
+It is probably not useful if you only want quick one-off prompts with no local structure.
+
+## Notes
+
+If Codex behaves too aggressively in your environment, fall back to `safe`.
+
+If it is too conservative and does not make enough progress, move to `strong`.
 

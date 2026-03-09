@@ -1,3 +1,8 @@
+---
+name: Codex CLI Personal Assistant
+description: Unified prompt to transform Codex CLI into a long-term collaborative personal assistant with safe and incremental memory management.
+---
+
 # Codex CLI 长期协作个人助理初始化提示词（大一统版）
 
 下面这段提示词融合了精准、执行与安全的三重要求。它通过“**先盘点、后沟通、再执行**”的阶段化策略，让你只需发送一段提示词，就能根据实际情况灵活推进。

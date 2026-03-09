@@ -134,17 +134,6 @@ That is the real point of the project: not just making Codex act smarter, but ma
 - [SKILL.md](./SKILL.md)  
   **The recommended unified version(v2).** Now heavily enhanced with a 4-part split global `AGENTS.md`, Lazy Loading, Global Projects Index, and an interactive Memory Promotion sync flow. It inspects the workspace first, then asks you whether to proceed safely or proactively. Combines the best of all three versions below seamlessly.
 
-- [codex-cli-personal-assistant-prompt-safe.md](./codex-cli-personal-assistant-prompt-safe.md)  
-  Inspect first, change later. Best for first-time setup and existing environments (v1 baseline).
-
-- [codex-cli-personal-assistant-prompt-lite.md](./codex-cli-personal-assistant-prompt-lite.md)  
-  Balanced default for most day-to-day use (v1 baseline).
-
-- [codex-cli-personal-assistant-prompt-strong.md](./codex-cli-personal-assistant-prompt-strong.md)  
-  More proactive setup for greenfield projects or when you want Codex to move faster (v1 baseline).
-
-- [codex-cli-personal-assistant-prompt-comparison.md](./codex-cli-personal-assistant-prompt-comparison.md)  
-  A side-by-side comparison table.
 
 ## Quick Start
 

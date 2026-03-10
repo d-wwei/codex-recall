@@ -1,9 +1,12 @@
-# Codex Companion Starter
+# Codex Recall
+
+> Have a mind like a steel trap.
+> 长期记忆，断点中继。
 
 [中文说明](./README.zh-CN.md)
 
 > **Looking for other CLI assistants?** 
-> Check out the sister extensions: [Claude Code Companion Starter](https://github.com/d-wwei/claude-code-companion-starter) & [Gemini Companion Starter](https://github.com/d-wwei/gemini-companion-starter)
+> Check out the sister extensions: [Claude Recall](https://github.com/d-wwei/claude-recall) & [Gemini Recall](https://github.com/d-wwei/gemini-recall)
 
 Turn Codex CLI into a directly installable, workspace-aware, long-term personal assistant skill.
 
@@ -235,7 +238,7 @@ Example:
 
 ```bash
 python ~/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py \
-  --repo d-wwei/codex-companion-starter \
+  --repo d-wwei/codex-recall \
   --path .
 ```
 

@@ -40,6 +40,7 @@ This prompt transforms Codex CLI from a powerful but amnesic one-shot tool into 
 - **Global Memory Promotion:** As it discovers your habits and reusable knowledge during active projects, it can automatically promote them to your global profile.
 - **Project-Specific Customization:** Every project can have its own tailored rules and context that override the global defaults.
 - **Fast Recall:** Helps Codex quickly recall your background, working style, recent decisions, and unfinished context when you re-enter a workspace.
+- **Structured Quick Recall:** Uses `.assistant/runtime/active-task.md`, `interrupted-tasks.md`, and `resume-protocol.md` to recover the current main task first, then show the rest of the paused queue in a predictable format.
 - **Layered Bootstrap Interview:** The unified prompt now uses a compact 3-step interview that captures naming, style, assistant role, ambiguity handling, work types, and memory boundaries without blocking real work.
 - **Global Quick Mode:** When run from `$HOME`, Codex updates only `~/.codex/AGENTS.md` and does not ask whether globally written information should be synced to global memory.
 - **Historical Project Scan:** First-time setup can now scan older `.assistant/` workspaces, extract project/session summaries, and register them into the global projects index.
@@ -56,6 +57,41 @@ OpenClaw takes a different approach. Its memory model treats Markdown files as d
 This repository borrows that memory philosophy and adapts it to Codex CLI.
 
 The goal is not to pretend Codex CLI has native persistent memory in the same sense. The goal is to use the file system as an external memory layer, so Codex can behave less like a stateless tool and more like a repeatable long-term collaborator.
+
+### Fast Recall Protocol
+
+The latest recall flow now separates workspace-level interruption routing from module-level `PROGRESS.md` checkpoints.
+
+- `.assistant/runtime/active-task.md` keeps the single highest-priority live task.
+- `.assistant/runtime/interrupted-tasks.md` keeps the rest of the paused queue in priority order.
+- `.assistant/runtime/resume-protocol.md` defines the hard rules for the first recovery reply.
+- `.assistant/runtime/resume-checkpoint-template.md` provides a reusable schema for named handoff checkpoints.
+
+When the user says things like `continue`, `resume`, `刚才做到哪里了`, or `恢复刚才的任务`, Codex should first read `active-task.md`, then produce a compact three-part recovery reply:
+
+```text
+A. 当前主任务
+task: ...
+progress: ...
+next step: ...
+
+---
+
+B. 其他中断任务
+task: ...
+priority: P2
+progress: ...
+next step: ...
+
+---
+
+C. 恢复选项
+1. 继续当前主任务
+2. 切换到 P2 ...
+3. 切换到 P3 ...
+```
+
+This keeps first-response recall fast, readable, and directly actionable without forcing a deep memory scan before the user is re-anchored.
 
 ### What This Changes
 
@@ -209,6 +245,8 @@ The recommended resume wording is:
 
 要我按这份进度继续吗？
 ```
+
+Use `PROGRESS.md` for module-local implementation or production checkpoints. Use the runtime recall files for workspace-level task switching, interruption routing, and quick re-entry.
 
 ### The Practical Meaning
 

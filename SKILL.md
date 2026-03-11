@@ -18,14 +18,16 @@ Keep execution direct, incremental, and safe.
 1. Perform real filesystem actions. Do not merely print suggested file contents.
 2. Prefer incremental edits over destructive rewrites.
 3. Treat deleted `.assistant/` state as de-initialized and clean stale project entries from `<GLOBAL_PROJECTS_INDEX>`.
-4. Use lazy loading during normal work: default to `~/.codex/AGENTS.md`, `.assistant/SYSTEM.md`, and `.assistant/runtime/inbox.md`; load deeper memory only when needed.
-5. For multi-step work of any kind, maintain a short `PROGRESS.md` in the active module or task directory so task-level progress survives process interruption.
-6. When resuming interrupted work, locate the relevant `PROGRESS.md` in this order: current working directory, most recently modified module, user-named module, then best keyword-matching module; read only the most relevant one or two before broader memory scans.
-7. Summarize completed items plus next step from the selected `PROGRESS.md`, and ask whether to continue from there.
-8. Only write session summaries and daily memory at meaningful boundaries such as task completion, `/done`, `结束`, `总结会话`, `归档`, or explicit decision capture.
-9. Never store secrets, tokens, banking information, medical data, or raw chat transcripts.
-10. If the user gives a real business task alongside initialization, prioritize the business task and keep bootstrap lightweight.
-11. If currently writing directly into `~/.codex/AGENTS.md` global sections, or working in global quick mode, do not ask whether to sync that same information to global memory.
+4. Use lazy loading during normal work: default to `~/.codex/AGENTS.md`, `.assistant/SYSTEM.md`, `.assistant/runtime/inbox.md`, and `.assistant/runtime/active-task.md`; load deeper memory only when needed.
+5. For workspace-level interrupted work, maintain `.assistant/runtime/active-task.md`, `.assistant/runtime/interrupted-tasks.md`, and `.assistant/runtime/resume-protocol.md` so a new process can re-anchor quickly before deeper scans.
+6. For named handoff points, maintain `.assistant/runtime/resume-checkpoint-template.md` or named checkpoints derived from it.
+7. For multi-step work inside a concrete module, maintain a short `PROGRESS.md` in the active module or task directory so task-level progress survives process interruption.
+8. When the user says things like `continue`, `resume`, `刚才做到哪里了`, or `恢复刚才的任务`, read `active-task.md` first, follow `resume-protocol.md`, and keep the first recovery reply compact.
+9. After the first compact recovery reply, consult `interrupted-tasks.md`, `last-session.md`, and the most relevant `PROGRESS.md` only if needed.
+10. Only write session summaries and daily memory at meaningful boundaries such as task completion, `/done`, `结束`, `总结会话`, `归档`, or explicit decision capture.
+11. Never store secrets, tokens, banking information, medical data, or raw chat transcripts.
+12. If the user gives a real business task alongside initialization, prioritize the business task and keep bootstrap lightweight.
+13. If currently writing directly into `~/.codex/AGENTS.md` global sections, or working in global quick mode, do not ask whether to sync that same information to global memory.
 
 ## Workspace decision
 
@@ -147,6 +149,10 @@ If the workspace is suitable, create or repair:
   runtime/
     inbox.md
     last-session.md
+    active-task.md
+    interrupted-tasks.md
+    resume-protocol.md
+    resume-checkpoint-template.md
 ```
 
 Additionally, for any non-trivial ongoing task, create or update a module-local `PROGRESS.md` near the active working directory. Do not centralize all task progress into `.assistant/`.
@@ -184,6 +190,41 @@ Rules:
   - store temporary context first
   - after 7 days, promote lasting value
   - after 14 days, suggest cleanup
+
+- `runtime/active-task.md`
+  - keep the single highest-priority live task here
+  - update it when a multi-step task starts, pauses, switches owner, or resumes
+  - fields should at least cover: task, status, last completed step, next step, blocking decision
+
+- `runtime/interrupted-tasks.md`
+  - keep all paused tasks here in priority order
+  - include paused time, task name, status, and next step
+  - higher-priority tasks should appear first
+
+- `runtime/resume-protocol.md`
+  - define the hard rules for the first recovery reply
+  - prefer the user's default language unless they explicitly switch
+  - read `active-task.md` before deeper checkpoint scans
+  - require a three-section recovery reply:
+    - `A. 当前主任务`
+    - `B. 其他中断任务`
+    - `C. 恢复选项`
+  - insert `---` between sections
+  - section A must use exactly:
+    - `task: ...`
+    - `progress: ...`
+    - `next step: ...`
+  - section B should list other interrupted tasks in priority order, and for each task use:
+    - `task: ...`
+    - `priority: P2`
+    - `progress: ...`
+    - `next step: ...`
+  - section C should provide numbered choices in the user's language so the next message can switch directly to another paused task
+
+- `runtime/resume-checkpoint-template.md`
+  - use this as the schema for named checkpoints or handoff notes
+  - include: task, paused at, priority, status, last completed step, next step, blocking decision
+  - keep it aligned with the recovery reply format from `resume-protocol.md`
 
 - `PROGRESS.md` in the active module/task directory
   - use it for task-level checkpointing, not session summaries
@@ -275,6 +316,40 @@ Rules:
 
   - if there is a blocker, switch `进行中` to `当前卡点`
   - if there are multiple candidates, summarize each in one line and ask which one to continue
+
+## Quick recall protocol
+
+When a user asks to continue, resume, or recover an interrupted task:
+
+1. Read `active-task.md` first.
+2. Do not deep-scan every checkpoint before producing the first recovery reply.
+3. Match the user's default language unless they explicitly switched languages.
+4. The first recovery reply should use this shape:
+
+   ```text
+   A. 当前主任务
+   task: ...
+   progress: ...
+   next step: ...
+
+   ---
+
+   B. 其他中断任务
+   task: ...
+   priority: P2
+   progress: ...
+   next step: ...
+
+   ---
+
+   C. 恢复选项
+   1. 继续当前主任务
+   2. 切换到 P2 ...
+   3. 切换到 P3 ...
+   ```
+
+5. Keep the first recovery reply compact and free of background explanation before section A.
+6. After the user chooses an option, switch directly to that task instead of re-explaining the queue.
 
 - if in Git and `.assistant/` is not ignored, append it to `.gitignore`
 
